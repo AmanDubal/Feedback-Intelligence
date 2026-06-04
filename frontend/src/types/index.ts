@@ -46,6 +46,17 @@ export interface DashboardData {
   }>;
 }
 
+export interface Cluster {
+  id: string;
+  theme: string;
+  issues: Issue[];
+  size: number;
+  main_keywords: string[];
+  severity: 'critical' | 'major' | 'minor';
+  affected_users: number;
+  trend: 'increasing' | 'stable' | 'decreasing' | 'resolved';
+}
+
 export interface PrioritiesData {
   priorities: {
     immediate: Issue[];

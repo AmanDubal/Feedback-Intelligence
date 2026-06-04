@@ -13,9 +13,6 @@ const nextConfig = {
   webpack: (config, { isServer }) => {
     return config;
   },
-  experimental: {
-    appDir: true,
-  },
   pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
