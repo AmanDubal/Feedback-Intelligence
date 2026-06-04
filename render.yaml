@@ -1,0 +1,60 @@
+services:
+  # PostgreSQL Database
+  - type: pserv
+    name: feedback-intelligence-db
+    ipAddress: false
+    plan: free
+    region: oregon
+    postgresSQLVersion: 15
+    
+  # Backend API (FastAPI)
+  - type: web
+    name: feedback-intelligence-api
+    runtime: python
+    plan: free
+    region: oregon
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: DATABASE_URL
+        fromDatabase:
+          name: feedback-intelligence-db
+          property: connectionString
+      - key: ENVIRONMENT
+        value: production
+      - key: LOG_LEVEL
+        value: INFO
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: SECRET_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        value: https://feedback-intelligence-web.onrender.com
+    autoDeploy: true
+    
+  # Frontend (Next.js)
+  - type: web
+    name: feedback-intelligence-web
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: cd frontend && npm install && npm run build
+    startCommand: cd frontend && npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 18.17.0
+      - key: NEXT_PUBLIC_API_URL
+        value: https://feedback-intelligence-api.onrender.com
+      - key: NODE_ENV
+        value: production
+    autoDeploy: true
+
+envVarGroups:
+  - name: secrets
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: SECRET_KEY
+        sync: false
